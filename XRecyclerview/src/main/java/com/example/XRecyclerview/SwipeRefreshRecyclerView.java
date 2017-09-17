@@ -4,10 +4,12 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -19,11 +21,11 @@ import java.io.InvalidClassException;
 
 public class SwipeRefreshRecyclerView extends RecyclerView {
 
-    private static final String TAG = "SwipeRefreshRecyclerVie";
+    private static final String TAG = "RefreshRecyclerView";
 
     private SwipeRefreshAdapter<ViewHolder> mAdapter;
-    private int mStartX, mCurrX;
-    private int mStartY, mCurrY;
+    private int mStartX;
+    private int mStartY;
     private float mCurrentHeaderHeight;
     private int mLastPosition = -1;
 
@@ -49,19 +51,31 @@ public class SwipeRefreshRecyclerView extends RecyclerView {
     }
 
     public static abstract class ViewHolder extends RecyclerView.ViewHolder {
-        private SwipeLayout swipeLayout;
-        private View menuView;
+        private SlideLayout slideLayout;
+        SparseArray<View> mViews;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            swipeLayout = (SwipeLayout) itemView;
-            menuView = swipeLayout.getMenuView();
+            mViews = new SparseArray<>();
+            slideLayout = (SlideLayout) itemView;
+        }
 
-            if (menuView != null) {
-                menuView.setOnClickListener(new OnClickListener() {
+        public View getViewById(@IdRes int viewId) {
+            View view = mViews.get(viewId);
+            if (view == null) {
+                view = itemView.findViewById(viewId);
+            }
+
+            return view;
+        }
+
+        public void setSubViewClickListener (View subView) {
+            if (subView != null) {
+                subView.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        swipeLayout.scrollCloseMenu();
+                        Log.d(TAG, "onClick: subView1");
+                        slideLayout.autoScrollCloseSubView();
                         if (mMenuClickListener != null) {
                             mMenuClickListener.onMenuClick(getAdapterPosition() - 1);
                         }
@@ -94,8 +108,7 @@ public class SwipeRefreshRecyclerView extends RecyclerView {
                 mStartY = (int) e.getY();
 
                 int currentPosition = getChildAdapterPosition(findChildViewUnder(mStartX, mStartY));
-                Log.d(TAG, "onInterceptTouchEvent() called with: currentPosition = [" + currentPosition + "]");
-                Log.d(TAG, "onInterceptTouchEvent() called with: mLastPosition = [" + mLastPosition + "]");
+                Log.d(TAG, "onInterceptTouchEvent() called with: currentPosition = [" + currentPosition + "]" + " mLastPosition = [" + mLastPosition + "]");
 
                 //当前点击的不是headerview和footerview
                 if (currentPosition != 0 && currentPosition != mAdapter.getItemCount() - 1) {
@@ -104,15 +117,10 @@ public class SwipeRefreshRecyclerView extends RecyclerView {
 
                     //存在之前点击的position，并且本次点击的position与前次不是同一个时，将前次position的menu关闭
                     if (mLastPosition != -1 && currentPosition != mLastPosition) {
-//                        ViewHolder holder = (ViewHolder) findViewHolderForAdapterPosition(mLastPosition);
-//                        SwipeLayout swipeLayout = (SwipeLayout) holder.itemView;
-//                        if (swipeLayout!= null && swipeLayout.getScrollX() != 0) {
-//                            swipeLayout.scrollCloseMenu();
-//                        }
                         if (mLastHolder != null) {
-                            SwipeLayout swipeLayout = (SwipeLayout) mLastHolder.itemView;
-                            if (swipeLayout != null && swipeLayout.getScrollX() != 0) {
-                                swipeLayout.scrollCloseMenu();
+                            SlideLayout slideLayout = (SlideLayout) mLastHolder.itemView;
+                            if (slideLayout != null && slideLayout.getScrollX() != 0) {
+                                slideLayout.autoScrollCloseSubView();
                             }
                         }
                     }
@@ -134,22 +142,20 @@ public class SwipeRefreshRecyclerView extends RecyclerView {
     public boolean onTouchEvent(MotionEvent e) {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                Log.d(TAG, "onTouchEvent: ACTION_DOWN");
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.d(TAG, "onTouchEvent: ACTION_MOVE");
                 if (mIsRefreshing) {
                     return super.onTouchEvent(e);
                 }
 
-                mCurrY = (int) e.getY();
-                if (getChildAt(1) != null && computeVerticalScrollOffset() <= getChildAt(1).getHeight()) {
-                    int distanceY = mCurrY - mStartY;
+                if (!canScrollVertically(-1)) {
+                    int distanceY = (int) (e.getY() - mStartX);
                     if (distanceY > 0) {
                         doPulling(distanceY);
                         return true;
                     }
                 }
+
                 break;
             case MotionEvent.ACTION_UP:
                 if (!mIsRefreshing) {
@@ -182,7 +188,7 @@ public class SwipeRefreshRecyclerView extends RecyclerView {
     }
 
     private void doPulling(int distanceY) {
-        float moveDistance = distanceY * 0.6f;
+        float moveDistance = distanceY * 0.8f;
         HeaderView headerView = mAdapter.getHeaderView();
         if (moveDistance <= REFRESH_HEIGHT_MIN) {
             headerView.setNowState(HeaderView.HeaderState.PULLING);
@@ -195,10 +201,8 @@ public class SwipeRefreshRecyclerView extends RecyclerView {
 
     private void doPullUp() {
         if (mAdapter.getHeaderView().getHeight() > REFRESH_HEIGHT_MIN) {
-            //开始刷新
             startRefresh();
         } else {
-            //回到原位置
             autoScrollBack();
         }
     }
@@ -259,7 +263,7 @@ public class SwipeRefreshRecyclerView extends RecyclerView {
 
     public void stopLoadMore() {
         mIsLoading = false;
-        mAdapter.getFooterView().setFooterState(FooterView.FooterState.READY);
+        mAdapter.getFooterView().setFooterState(FooterView.FooterState.FINISH);
     }
 
     public void setOnRefreshListener(OnRefreshListener listener) {

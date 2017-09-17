@@ -30,7 +30,7 @@ public class DefaultFooterView extends FooterView {
     }
 
     @Override
-    public int getFooterLayoutRes() {
+    public int getFooterLayoutResId() {
         return R.layout.default_footer_layout;
     }
 
@@ -40,7 +40,7 @@ public class DefaultFooterView extends FooterView {
     }
 
     @Override
-    public void onReadyState() {
+    public void onFinishState() {
         mFooterText.setText("加载完成");
     }
 

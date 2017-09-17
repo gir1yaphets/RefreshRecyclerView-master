@@ -39,25 +39,25 @@ public class DefaultHeaderView extends HeaderView {
     }
 
     @Override
-    public int getLayoutRes() {
+    public int getHeaderLayoutResId() {
         return R.layout.default_header_layout;
     }
 
     @Override
     public void onPullingState() {
-        mTextView.setText("下拉刷新");
+        mTextView.setText(getContext().getResources().getString(R.string.pull_refresh));
         mProgressBar.setVisibility(INVISIBLE);
     }
 
     @Override
     public void onRefreshingState() {
-        mTextView.setText("正在刷新");
+        mTextView.setText(getContext().getResources().getString(R.string.in_refresh));
         mProgressBar.setVisibility(VISIBLE);
     }
 
     @Override
     public void onReadyState() {
-        mTextView.setText("松开刷新");
+        mTextView.setText(getContext().getResources().getString(R.string.ready_refresh));
         mProgressBar.setVisibility(INVISIBLE);
     }
 }

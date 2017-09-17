@@ -22,18 +22,16 @@ public abstract class HeaderView extends RelativeLayout {
     }
 
     public HeaderView(Context context) {
-        super(context);
-        init(context, null);
+        this(context, null);
     }
 
     public HeaderView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs);
+        this(context, attrs, 0);
     }
 
     public HeaderView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs);
+        init();
     }
 
     public void setNowState(HeaderState state) {
@@ -41,8 +39,8 @@ public abstract class HeaderView extends RelativeLayout {
         refreshView();
     }
 
-    private void init(Context context, AttributeSet attrs) {
-        View.inflate(context, getLayoutRes(), this);
+    private void init() {
+        View.inflate(getContext(), getHeaderLayoutResId(), this);
         mRootContainer = getRootContainer();
         initView();
         setNowState(HeaderState.HIND);
@@ -59,7 +57,7 @@ public abstract class HeaderView extends RelativeLayout {
 
     public abstract RelativeLayout getRootContainer();
 
-    public abstract int getLayoutRes();
+    public abstract int getHeaderLayoutResId();
 
     public abstract void onPullingState();
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.XRecyclerview.SlideLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="3dp">
+
+    <TextView
+        android:id="@+id/id_contentText"
+        android:background="#0fff00ff"
+        android:layout_marginBottom="3dp"
+        android:gravity="center"
+        android:drawableRight="@mipmap/ic_launcher"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+    <TextView
+        android:id="@+id/subView1"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:background="#ffff00"
+        android:text="标记未读"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"/>
+
+    <TextView
+        android:id="@+id/subView2"
+        android:text="删除"
+        android:gravity="center"
+        android:background="#00ffff"
+        android:textSize="12sp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"/>
+
+</com.example.XRecyclerview.SlideLayout>

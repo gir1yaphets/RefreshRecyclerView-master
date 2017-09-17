@@ -83,7 +83,7 @@ public class SwipeLayout extends FrameLayout {
         int parentWidthMode = MeasureSpec.getMode(widthMeasureSpec);
         int parentHeightMode = MeasureSpec.getMode(heightMeasureSpec);
 
-        for (int i = 0; i <count; i++) {
+        for (int i = 0; i < count; i++) {
             View childView = getChildAt(i);
             final ViewGroup.LayoutParams lp = childView.getLayoutParams();
             int width = lp.width;
@@ -136,12 +136,14 @@ public class SwipeLayout extends FrameLayout {
             contentViewWidth = mContentView.getWidth();
             contentViewHeight = mContentView.getHeight();
             mContentView.layout(0, 0, contentViewWidth, contentViewHeight);
-            Log.d(TAG, "onLayout() called with: " + "contentViewWidth = [" + contentViewWidth + "], contentViewHeight = [" + contentViewHeight + "]");
+            Log.d(TAG, "onLayout() called with: " + "contentViewWidth = [" + contentViewWidth + "], contentViewHeight" +
+                    " = [" + contentViewHeight + "]");
 
             if (mMenuView != null) {
                 mMenuView.layout(contentViewWidth, 0, contentViewWidth + mMenuView.getMeasuredWidth(),
                         contentViewHeight);
-                Log.d(TAG, "onLayout() called with: " + "mMenuView.getMeasuredWidth() = [" + mMenuView.getMeasuredWidth() + "]");
+                Log.d(TAG, "onLayout() called with: " + "mMenuView.getMeasuredWidth() = [" + mMenuView
+                        .getMeasuredWidth() + "]");
                 Log.d(TAG, "onLayout() called with: " + "mMenuView.getWidth() = [" + mMenuView.getWidth() + "]");
             }
         }
@@ -153,8 +155,6 @@ public class SwipeLayout extends FrameLayout {
         Paint paint = new Paint();
         paint.setColor(Color.BLUE);
         Rect rect = new Rect(0, 0, mContentView.getWidth(), mContentView.getHeight());
-//        Log.d(TAG, "onDraw() called with: " + "mContentView.getWidth() = [" + mContentView.getWidth() + "]");
-//        Log.d(TAG, "onDraw() called with: " + "mContentView.getHeight() = [" + mContentView.getHeight() + "]");
         canvas.drawRect(rect, paint);
         invalidate();
     }
@@ -223,7 +223,8 @@ public class SwipeLayout extends FrameLayout {
                         Log.d(TAG, "ACTION_MOVE: case 3:scrollX = " + scrollX);
                         //向左滑动
                         if (distanceX > 0) {
-                            distanceX = distanceX + scrollX > mMenuView.getWidth() ? mMenuView.getWidth() - scrollX : distanceX;
+                            distanceX = distanceX + scrollX > mMenuView.getWidth() ? mMenuView.getWidth() - scrollX :
+                                    distanceX;
                         }
 
                         //向右滑动
@@ -242,7 +243,7 @@ public class SwipeLayout extends FrameLayout {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 Log.d(TAG, "ACTION_UP: received");
-                if (getScrollX() > mMenuView.getWidth()/2) {
+                if (getScrollX() > mMenuView.getWidth() / 2) {
                     Log.d(TAG, "ACTION_UP: OpenMenu");
                     scrollOpenMenu();
                 } else {
@@ -290,7 +291,7 @@ public class SwipeLayout extends FrameLayout {
     private void doScroll(float distance) {
         int scrollX = getScrollX();
         Log.d(TAG, "doScroll: getScrollX() = " + scrollX);
-        int finalX = scrollX + (int)distance;
+        int finalX = scrollX + (int) distance;
         mScroller.setFinalX(finalX);
         mXLastMove = mXMove;
         invalidate();

@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.XRecyclerview.SwipeLayout;
 import com.example.XRecyclerview.SwipeRefreshAdapter;
 import com.example.XRecyclerview.SwipeRefreshRecyclerView;
 
@@ -21,22 +20,22 @@ public class SwipeRefreshAdapterImp extends SwipeRefreshAdapter<SwipeRefreshAdap
     private LayoutInflater mInflater;
     private List<String> mDatas;
 
+    private static final String TAG = "SwipeRefreshAdapterImp";
+
     public SwipeRefreshAdapterImp(Context context, List<String> datas) {
         mInflater = LayoutInflater.from(context);
         mDatas = datas;
     }
 
     @Override
-    public int getSwipeItemCount() {
+    public int getItemDataCount() {
         return mDatas.size();
     }
 
     @Override
     public SwipeRefreshRecyclerView.ViewHolder onCreateSwipeViewHolder(ViewGroup parent, int viewType) {
-        View content = mInflater.inflate(R.layout.content_view, parent, false);
-        View menu = mInflater.inflate(R.layout.slide_view, parent, false);
-        SwipeLayout swipeLayout = new SwipeLayout(parent.getContext(), content, menu);
-        SwipeRefreshRecyclerView.ViewHolder viewHolder = new SwipeRefreshViewHolder(swipeLayout);
+        View slideLayout = mInflater.inflate(R.layout.slide_layout, parent, false);
+        SwipeRefreshRecyclerView.ViewHolder viewHolder = new SwipeRefreshViewHolder(slideLayout);
         return viewHolder;
     }
 
@@ -47,10 +46,15 @@ public class SwipeRefreshAdapterImp extends SwipeRefreshAdapter<SwipeRefreshAdap
 
     class SwipeRefreshViewHolder extends SwipeRefreshRecyclerView.ViewHolder {
         TextView textView;
+        View subView1;
+        View subView2;
 
         public SwipeRefreshViewHolder(View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.id_contentText);
+            textView = (TextView) getViewById(R.id.id_contentText);
+            subView1 = getViewById(R.id.subView1);
+
+            setSubViewClickListener(subView1);
         }
 
         public void setText(String content) {

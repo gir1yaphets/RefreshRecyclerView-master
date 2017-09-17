@@ -17,28 +17,26 @@ public abstract class FooterView extends RelativeLayout{
     private RelativeLayout mRootContainer;
 
     public FooterView(Context context) {
-        super(context);
-        init(context);
+        this(context, null);
     }
 
     public FooterView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
+        this(context, attrs, 0);
     }
 
     public FooterView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
+        init();
     }
 
     public enum FooterState {
         HIND,
         LOADING,
-        READY
+        FINISH
     }
 
-    private void init(Context context) {
-        View.inflate(context, getFooterLayoutRes(), this);
+    private void init() {
+        View.inflate(getContext(), getFooterLayoutResId(), this);
         mRootContainer = getRootContainer();
         initView();
         setFooterState(LOADING);
@@ -51,13 +49,13 @@ public abstract class FooterView extends RelativeLayout{
 
     public abstract void initView();
 
-    public abstract int getFooterLayoutRes();
+    public abstract int getFooterLayoutResId();
 
     public abstract RelativeLayout getRootContainer();
 
     public abstract void onLoadingState();
 
-    public abstract void onReadyState();
+    public abstract void onFinishState();
 
     private void refreshView() {
         switch (mFooterState) {
@@ -68,9 +66,9 @@ public abstract class FooterView extends RelativeLayout{
                 onLoadingState();
                 mRootContainer.setVisibility(VISIBLE);
                 break;
-            case READY:
-                onReadyState();
-                mRootContainer.setVisibility(VISIBLE);
+            case FINISH:
+                onFinishState();
+                mRootContainer.setVisibility(GONE);
                 break;
             default:
                 break;

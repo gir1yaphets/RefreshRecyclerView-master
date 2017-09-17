@@ -21,17 +21,14 @@ public abstract class SwipeRefreshAdapter<V extends SwipeRefreshRecyclerView.Vie
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == HEADER_TYPE) {
-            //header viewholder
             mHeaderView = mHeaderView == null ? new DefaultHeaderView(parent.getContext()) : mHeaderView;
             mHeaderViewHolder = new HeaderFooterViewHolder(mHeaderView);
             return mHeaderViewHolder;
         } else if (viewType == FOOTER_TYPE) {
-            //footer viewholder
             mFooterView = mFooterView == null ? new DefaultFooterView(parent.getContext()) : mFooterView;
             mFooterViewHolder = new HeaderFooterViewHolder(mFooterView);
             return mFooterViewHolder;
         } else {
-            //item viewholder
             return onCreateSwipeViewHolder(parent, viewType);
         }
     }
@@ -45,23 +42,21 @@ public abstract class SwipeRefreshAdapter<V extends SwipeRefreshRecyclerView.Vie
 
     @Override
     public int getItemCount() {
-        return getSwipeItemCount() + 2;
+        return getItemDataCount() + 2;
     }
 
     @Override
     public int getItemViewType(int position) {
         if (position == 0) {
-            //header type
             return HEADER_TYPE;
         } else if (position == getItemCount() - 1) {
-            //footer type
             return FOOTER_TYPE;
         } else {
             return super.getItemViewType(position);
         }
     }
 
-    public abstract int getSwipeItemCount();
+    public abstract int getItemDataCount();
 
     public abstract SwipeRefreshRecyclerView.ViewHolder onCreateSwipeViewHolder(ViewGroup parent, int viewType);
 

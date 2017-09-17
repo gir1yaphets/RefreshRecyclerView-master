@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.example.XRecyclerview.RecyclerViewDivider;
 import com.example.XRecyclerview.SwipeRefreshRecyclerView;
 
 import java.util.ArrayList;
@@ -19,8 +20,8 @@ import java.util.List;
 
 public class SwipeRefreshActivity extends Activity implements SwipeRefreshRecyclerView.OnRefreshListener {
 
-    SwipeRefreshRecyclerView mRecyclerView;
-    SwipeRefreshAdapterImp mAdapter;
+    private SwipeRefreshRecyclerView mRecyclerView;
+    private SwipeRefreshAdapterImp mAdapter;
     private List<String> mData = new ArrayList<>();
 
     private static final int REFRESH_DATA = 0;
@@ -42,14 +43,13 @@ public class SwipeRefreshActivity extends Activity implements SwipeRefreshRecycl
         mRecyclerView.setAdapter(mAdapter);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.addItemDecoration(new RecyclerViewDivider(this, LinearLayoutManager.HORIZONTAL));
         mRecyclerView.setOnRefreshListener(this);
         mRecyclerView.setOnMenuClickListener(new SwipeRefreshRecyclerView.OnMenuClickListener() {
             @Override
             public void onMenuClick(int position) {
-                Log.d("SwipeRefreshRecyclerVie", "onMenuClick: ");
                 mData.remove(position);
                 mAdapter.notifyDataSetChanged();
-//                mAdapter.notifyItemRemoved(position + 1);
             }
         });
     }
